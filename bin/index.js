@@ -24,11 +24,15 @@ function usage() {
 }
 
 function saveData(data) {
-  // stringify data
   const dataString = JSON.stringify(data);
-
-  // Write file
   fs.writeFileSync(DATA_PATH, dataString);
+}
+
+function readData() {
+  const res = fs.readFileSync(DATA_PATH);
+  const data = JSON.parse(res);
+
+  return data;
 }
 
 function init() {

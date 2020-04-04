@@ -118,3 +118,5 @@ dist
 # Environment
 
 .env
+data.json
+bin/data.json

@@ -22,11 +22,10 @@ npm install -g .
 ## Usage
 
 ```
-todos -c [init|list|add|delete|help] -t [optional]
+todos -c [add|list|delete|help] -t [optional]
 ```
 
 ```
-todos -c init 			 To initialize storage
 todos -c list 			 To list items
 todos -c add -t "Text here" 	 To add new item
 todos -c delete id 		 To delete item

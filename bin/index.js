@@ -2,14 +2,20 @@
 
 const yargs = require("yargs");
 const chalk = require("chalk");
-const PouchDB = require("pouchdb-node");
+const TodosController = require("./controllers/todos");
 
+// Should move to .env
 const DB_NAME = "todos";
 const DB_REMOTE_USER = "admin";
 const DB_REMOTE_PASSWORD = "iniadmin";
 const DB_REMOTE_HOST = "13.250.43.79";
 
-const db = new PouchDB(DB_NAME);
+const todos = new TodosController({
+  db_name: DB_NAME,
+  remote_user: DB_REMOTE_USER,
+  remote_password: DB_REMOTE_PASSWORD,
+  rmeote_host: DB_REMOTE_HOST
+});
 
 const options = yargs
   .usage("Usage: -c command")
@@ -34,100 +40,23 @@ function usage() {
   console.log("todos -c help \t\t\t For help\n");
 }
 
-function createId() {
-  let id = new Date().getTime().toString(16);
-  while (id.length < 32) {
-    id += Math.random()
-      .toString(16)
-      .split(".")
-      .pop();
-  }
-  id = id.substr(0, 32);
-  id = id.replace(/(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/, "$1-$2-$3-$4-$5");
-  return id;
-}
-
-function listItems() {
-  console.log("\nTask list");
-  console.log("==========================");
-
-  db.allDocs({ include_docs: true })
-    .then(result => {
-      const { rows } = result;
-      if (!rows || !rows.length) {
-        console.log("Empty!");
-        console.log("==========================\n");
-      } else {
-        rows.forEach(r => {
-          if (r.doc) {
-            console.log(
-              `[${r.doc.done ? "x" : " "}] ${r.doc._id} - ${r.doc.text}`
-            );
-          }
-        });
-        console.log("==========================\n");
-      }
-    })
-    .catch(err => {
-      console.log(err);
-    });
-}
-
-function addItem() {
-  if (!options.t) {
-    console.log(chalk.red.bold("Text is required!"));
-    return;
-  }
-
-  const newTask = {
-    _id: createId(),
-    text: options.t,
-    done: false
-  };
-  db.put(newTask).catch(err => {
-    console.log(err);
-  });
-
-  console.log("New task added!\n");
-  console.log("  ID:", newTask._id);
-  console.log("  Text:", newTask.text, "\n");
-}
-
-function deleteItem() {
-  console.log("Delete");
-}
-
-function sync() {
-  console.log("\nSync DB");
-  console.log("==========================");
-
-  const dbConn = `http://${DB_REMOTE_USER}:${DB_REMOTE_PASSWORD}@${DB_REMOTE_HOST}:5984/${DB_NAME}_rendyfebry`;
-
-  PouchDB.sync(DB_NAME, dbConn)
-    .on("change", info => {
-      console.log("Synchronizing...");
-    })
-    .on("complete", err => {
-      console.log("Sync completed!\n");
-    })
-    .on("error", err => {
-      console.log("Sync Failed!");
-      console.log(err);
-    });
-}
-
 switch (options.c) {
   case "list":
-    listItems();
+    todos.listItems();
     break;
   case "add":
-    addItem();
+    if (!options.t) {
+      console.log(chalk.red.bold("Text is required!"));
+      return;
+    }
+
+    todos.addItem(options.t);
     break;
   case "delete":
-    deleteItem();
+    todos.deleteItem();
     break;
   case "sync":
-    sync();
+    todos.sync();
     break;
   case "help":
     usage();

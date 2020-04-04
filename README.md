@@ -39,3 +39,17 @@ PS: If you didn't install globally, you need to change the command from `todos` 
 ```
 node . -c list
 ```
+
+## Docker
+
+Docker Build
+
+```
+docker build -t todos .
+```
+
+Run in Docker
+
+```
+docker run --rm -ti todos ./bin/index.js -c list
+```

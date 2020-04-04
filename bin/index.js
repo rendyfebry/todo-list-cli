@@ -38,11 +38,12 @@ const options = yargs
 
 function usage() {
   console.log(
-    "\nUsage:\ntodos -c [add|list|delete|sync|help] -t [optional] -i [optional]\n"
+    "\nUsage:\ntodos -c [add|list|delete|complete|sync|help] -t [optional] -i [optional]\n"
   );
   console.log("todos -c list \t\t\t To list items");
   console.log('todos -c add -t "Text here" \t To add new item');
   console.log('todos -c delete -i "ID" \t To delete item');
+  console.log('todos -c complete -i "ID" \t To mark item complete');
   console.log("todos -c sync \t\t\t To sync DB");
   console.log("todos -c help \t\t\t For help\n");
 }

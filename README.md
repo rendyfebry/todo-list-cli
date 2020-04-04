@@ -29,6 +29,7 @@ todos -c [add|list|delete|sync|help] -t [optional] -i [optional]
 todos -c list 			 To list items
 todos -c add -t "Text here" 	 To add new item
 todos -c delete -i "ID" 	 To delete item
+todos -c complete -i "ID" 	 To mark item complete
 todos -c sync 			 To sync DB
 todos -c help 			 For help
 ```

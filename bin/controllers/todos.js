@@ -59,6 +59,28 @@ class Todos {
       });
   }
 
+  markItem(id) {
+    console.log("\nMark Item");
+    console.log("==========================");
+
+    this.db
+      .get(id)
+      .then(doc => {
+        return this.db.put({
+          _id: doc._id,
+          _rev: doc._rev,
+          text: doc.text,
+          done: true
+        });
+      })
+      .then(result => {
+        console.log("Sucessfully mark Item!\n");
+      })
+      .catch(err => {
+        console.log(`Mark Failed! ${err.name || ""} \n`);
+      });
+  }
+
   listItems() {
     console.log("\nTask list");
     console.log("==========================");

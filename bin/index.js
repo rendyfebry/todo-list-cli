@@ -68,6 +68,14 @@ switch (options.c) {
     }
     todos.deleteItem(options.i);
     break;
+  case "complete":
+    if (!options.i) {
+      console.log(chalk.red.bold("ID is required!"));
+      usage();
+      return;
+    }
+    todos.markItem(options.i);
+    break;
   case "sync":
     todos.sync();
     break;

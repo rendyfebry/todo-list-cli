@@ -39,8 +39,19 @@ class Todos {
     console.log("  Text:", newTask.text, "\n");
   }
 
-  deleteItem() {
-    console.log("Delete Item");
+  deleteItem(id) {
+    console.log("\nDelete Item");
+    console.log("==========================");
+
+    this.db
+      .get(id)
+      .then(doc => this.db.remove(doc._id, doc._rev))
+      .then(result => {
+        console.log("Sucessfully delete Item!\n");
+      })
+      .catch(err => {
+        console.log("Delete Failed!", err.name || "", "\n");
+      });
   }
 
   listItems() {

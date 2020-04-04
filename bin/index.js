@@ -29,13 +29,20 @@ const options = yargs
     alias: "text",
     describe: "Text",
     type: "string"
+  })
+  .option("i", {
+    alias: "id",
+    describe: "Task ID",
+    type: "string"
   }).argv;
 
 function usage() {
-  console.log("\nUsage:\ntodos -c [add|list|delete|sync|help] -t [optional]\n");
+  console.log(
+    "\nUsage:\ntodos -c [add|list|delete|sync|help] -t [optional] -i [optional]\n"
+  );
   console.log("todos -c list \t\t\t To list items");
   console.log('todos -c add -t "Text here" \t To add new item');
-  console.log("todos -c delete id \t\t To delete item");
+  console.log('todos -c delete -i "ID" \t To delete item');
   console.log("todos -c sync \t\t\t To sync DB");
   console.log("todos -c help \t\t\t For help\n");
 }
@@ -47,13 +54,19 @@ switch (options.c) {
   case "add":
     if (!options.t) {
       console.log(chalk.red.bold("Text is required!"));
+      usage();
       return;
     }
 
     todos.addItem(options.t);
     break;
   case "delete":
-    todos.deleteItem();
+    if (!options.i) {
+      console.log(chalk.red.bold("ID is required!"));
+      usage();
+      return;
+    }
+    todos.deleteItem(options.i);
     break;
   case "sync":
     todos.sync();

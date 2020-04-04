@@ -5,7 +5,6 @@ const chalk = require("chalk");
 const PouchDB = require("pouchdb-node");
 
 const DB_NAME = "todos";
-
 const db = new PouchDB(DB_NAME);
 
 const options = yargs
@@ -29,6 +28,19 @@ function usage() {
   console.log('todos -c add -t "Text here" \t To add new item');
   console.log("todos -c delete id \t\t To delete item");
   console.log("todos -c help \t\t\t For help\n");
+}
+
+function createId() {
+  let id = new Date().getTime().toString(16);
+  while (id.length < 32) {
+    id += Math.random()
+      .toString(16)
+      .split(".")
+      .pop();
+  }
+  id = id.substr(0, 32);
+  id = id.replace(/(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/, "$1-$2-$3-$4-$5");
+  return id;
 }
 
 function listItems() {
@@ -64,7 +76,7 @@ function addItem() {
   }
 
   const newTask = {
-    _id: Date.now().toString(),
+    _id: createId(),
     text: options.t,
     done: false
   };

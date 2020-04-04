@@ -6,19 +6,26 @@ const fs = require("fs");
 
 const DATA_PATH = "./data.json";
 
-const options = yargs.usage("Usage: -c command").option("c", {
-  alias: "command",
-  describe: "Your command",
-  type: "string",
-  demandOption: true
-}).argv;
+const options = yargs
+  .usage("Usage: -c command")
+  .option("c", {
+    alias: "command",
+    describe: "Your command",
+    type: "string",
+    demandOption: true
+  })
+  .option("t", {
+    alias: "text",
+    describe: "Text",
+    type: "string"
+  }).argv;
 
 // Display Usage
 function usage() {
-  console.log("\nUsage:\ntodos [init|list|add|delete|help] [optional]\n");
+  console.log("\nUsage:\ntodos -c [init|list|add|delete|help] -t [optional]\n");
   console.log("todos -c init \t\t\t To initialize storage");
   console.log("todos -c list \t\t\t To list items");
-  console.log('todos -c add "Text here" \t To add new item');
+  console.log('todos -c add -t "Text here" \t To add new item');
   console.log("todos -c delete id \t\t To delete item");
   console.log("todos -c help \t\t\t For help\n");
 }
@@ -41,7 +48,7 @@ function init() {
     saveData([]);
     console.log("Storage created.");
   } else {
-    console.log("Already initialized");
+    console.log("Storage already initialized!");
   }
 }
 
@@ -50,7 +57,25 @@ function listItems() {
 }
 
 function addItem() {
-  console.log("Add");
+  if (!options.t) {
+    console.log(chalk.red.bold("Text is required!"));
+    return;
+  }
+
+  const data = readData();
+
+  const newTask = {
+    id: Date.now(),
+    text: options.t,
+    done: false
+  };
+  data.push(newTask);
+
+  console.log("New task added!\n");
+  console.log("  ID:", newTask.id);
+  console.log("  Text:", newTask.text, "\n");
+
+  saveData(data);
 }
 
 function deleteItem() {

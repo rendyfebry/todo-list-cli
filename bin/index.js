@@ -5,6 +5,10 @@ const chalk = require("chalk");
 const PouchDB = require("pouchdb-node");
 
 const DB_NAME = "todos";
+const DB_REMOTE_USER = "admin";
+const DB_REMOTE_PASSWORD = "iniadmin";
+const DB_REMOTE_HOST = "13.250.43.79";
+
 const db = new PouchDB(DB_NAME);
 
 const options = yargs
@@ -21,12 +25,12 @@ const options = yargs
     type: "string"
   }).argv;
 
-// Display Usage
 function usage() {
-  console.log("\nUsage:\ntodos -c [add|list|delete|help] -t [optional]\n");
+  console.log("\nUsage:\ntodos -c [add|list|delete|sync|help] -t [optional]\n");
   console.log("todos -c list \t\t\t To list items");
   console.log('todos -c add -t "Text here" \t To add new item');
   console.log("todos -c delete id \t\t To delete item");
+  console.log("todos -c sync \t\t\t To sync DB");
   console.log("todos -c help \t\t\t For help\n");
 }
 
@@ -93,6 +97,25 @@ function deleteItem() {
   console.log("Delete");
 }
 
+function sync() {
+  console.log("\nSync DB");
+  console.log("==========================");
+
+  const dbConn = `http://${DB_REMOTE_USER}:${DB_REMOTE_PASSWORD}@${DB_REMOTE_HOST}:5984/${DB_NAME}_rendyfebry`;
+
+  PouchDB.sync(DB_NAME, dbConn)
+    .on("change", info => {
+      console.log("Synchronizing...");
+    })
+    .on("complete", err => {
+      console.log("Sync completed!\n");
+    })
+    .on("error", err => {
+      console.log("Sync Failed!");
+      console.log(err);
+    });
+}
+
 switch (options.c) {
   case "list":
     listItems();
@@ -102,6 +125,9 @@ switch (options.c) {
     break;
   case "delete":
     deleteItem();
+    break;
+  case "sync":
+    sync();
     break;
   case "help":
     usage();

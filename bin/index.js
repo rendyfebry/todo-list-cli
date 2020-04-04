@@ -53,7 +53,20 @@ function init() {
 }
 
 function listItems() {
-  console.log("List");
+  const data = readData();
+
+  if (data.length > 0) {
+    console.log("\nTask list");
+    console.log("==========================");
+
+    data.forEach(task => {
+      console.log(`[${task.done ? "x" : " "}] ${task.id} - ${task.text}`);
+    });
+
+    console.log("==========================\n");
+  } else {
+    console.log("Empty!");
+  }
 }
 
 function addItem() {

@@ -24,19 +24,24 @@ class Todos {
   }
 
   addItem(text) {
+    console.log("\nAdd Task");
+    console.log("==========================");
+
     const newTask = {
       _id: this.createId(),
       text,
       done: false
     };
 
-    this.db.put(newTask).catch(err => {
-      console.log(err);
-    });
-
-    console.log("New task added!\n");
-    console.log("  ID:", newTask._id);
-    console.log("  Text:", newTask.text, "\n");
+    this.db
+      .put(newTask)
+      .then(() => {
+        console.log("New task added! \n");
+        console.log(JSON.stringify(newTask));
+      })
+      .catch(err => {
+        console.log(`Add Item Failed! ${err.name || ""} \n`);
+      });
   }
 
   deleteItem(id) {
@@ -50,7 +55,7 @@ class Todos {
         console.log("Sucessfully delete Item!\n");
       })
       .catch(err => {
-        console.log("Delete Failed!", err.name || "", "\n");
+        console.log(`Delete Failed! ${err.name || ""} \n`);
       });
   }
 
@@ -77,7 +82,7 @@ class Todos {
         }
       })
       .catch(err => {
-        console.log(err);
+        console.log(`List item Failed! ${err.name || ""} \n`);
       });
   }
 
@@ -95,8 +100,7 @@ class Todos {
         console.log("Sync completed!\n");
       })
       .on("error", err => {
-        console.log("Sync Failed!");
-        console.log(err);
+        console.log(`Sync Failed! ${err.name || ""} \n`);
       });
   }
 }

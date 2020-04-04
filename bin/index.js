@@ -41,18 +41,30 @@ function init() {
   }
 }
 
+function listItems() {
+  console.log("List");
+}
+
+function addItem() {
+  console.log("Add");
+}
+
+function deleteItem() {
+  console.log("Delete");
+}
+
 switch (options.c) {
   case "init":
     init();
     break;
   case "list":
-    console.log("list");
+    listItems();
     break;
   case "add":
-    console.log("add");
+    addItem();
     break;
   case "delete":
-    console.log("delete");
+    deleteItem();
     break;
   case "help":
     usage();

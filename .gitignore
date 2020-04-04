@@ -120,3 +120,5 @@ dist
 .env
 data.json
 bin/data.json
+todos
+bin/todos

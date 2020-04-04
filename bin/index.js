@@ -3,8 +3,12 @@
 const yargs = require("yargs");
 const chalk = require("chalk");
 const fs = require("fs");
+const PouchDB = require("pouchdb-node");
 
 const DATA_PATH = "./data.json";
+const DB_NAME = "todos";
+
+const db = new PouchDB(DB_NAME);
 
 const options = yargs
   .usage("Usage: -c command")
@@ -53,20 +57,28 @@ function init() {
 }
 
 function listItems() {
-  const data = readData();
+  console.log("\nTask list");
+  console.log("==========================");
 
-  if (data.length > 0) {
-    console.log("\nTask list");
-    console.log("==========================");
-
-    data.forEach(task => {
-      console.log(`[${task.done ? "x" : " "}] ${task.id} - ${task.text}`);
+  db.allDocs({ include_docs: true })
+    .then(result => {
+      const { rows } = result;
+      if (!rows || !rows.length) {
+        console.log("Empty!");
+      } else {
+        rows.forEach(r => {
+          if (r.doc) {
+            console.log(
+              `[${r.doc.done ? "x" : " "}] ${r.doc._id} - ${r.doc.text}`
+            );
+          }
+        });
+        console.log("==========================\n");
+      }
+    })
+    .catch(err => {
+      console.log(err);
     });
-
-    console.log("==========================\n");
-  } else {
-    console.log("Empty!");
-  }
 }
 
 function addItem() {
@@ -75,20 +87,18 @@ function addItem() {
     return;
   }
 
-  const data = readData();
-
   const newTask = {
-    id: Date.now(),
+    _id: Date.now().toString(),
     text: options.t,
     done: false
   };
-  data.push(newTask);
+  db.put(newTask).catch(err => {
+    console.log(err);
+  });
 
   console.log("New task added!\n");
-  console.log("  ID:", newTask.id);
+  console.log("  ID:", newTask._id);
   console.log("  Text:", newTask.text, "\n");
-
-  saveData(data);
 }
 
 function deleteItem() {
